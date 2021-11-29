@@ -16,7 +16,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         window = UIWindow(windowScene: windowScene)
         
-        let deviceProvider = DeviceProvider()
+        let storageDevices: StorageProtocol = StaticArrayData()
+        ///example of working with the adapter.
+//        let storageDevices: StorageProtocol = StorageJSONAdapter(storage: StorageJSON())
+        
+        let deviceProvider = DeviceProvider(storage: storageDevices)
         
         let tabBarController = Configurator.configureTabBarController(frontProvider: deviceProvider as StoreFrontProviderProtocol, backProvider: deviceProvider as BackEndProviderProtocol)
         

@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		A51CAF86274ECB5100682B4B /* DetailDeviceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A51CAF85274ECB5100682B4B /* DetailDeviceView.swift */; };
+		A5312CCA2754F6DC00935333 /* StaticArrayData.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5312CC92754F6DC00935333 /* StaticArrayData.swift */; };
+		A5312CCC27550E9C00935333 /* StorageJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5312CCB27550E9C00935333 /* StorageJSON.swift */; };
 		A53552DE2753FC350050169D /* MainTabBarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A53552DD2753FC350050169D /* MainTabBarViewController.swift */; };
 		A58B28A4274CF17A0010C2A4 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A58B28A3274CF17A0010C2A4 /* AppDelegate.swift */; };
 		A58B28A6274CF17A0010C2A4 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A58B28A5274CF17A0010C2A4 /* SceneDelegate.swift */; };
@@ -26,6 +28,8 @@
 
 /* Begin PBXFileReference section */
 		A51CAF85274ECB5100682B4B /* DetailDeviceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailDeviceView.swift; sourceTree = "<group>"; };
+		A5312CC92754F6DC00935333 /* StaticArrayData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StaticArrayData.swift; sourceTree = "<group>"; };
+		A5312CCB27550E9C00935333 /* StorageJSON.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageJSON.swift; sourceTree = "<group>"; };
 		A53552DD2753FC350050169D /* MainTabBarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabBarViewController.swift; sourceTree = "<group>"; };
 		A58B28A0274CF17A0010C2A4 /* Funbox.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Funbox.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A58B28A3274CF17A0010C2A4 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -103,6 +107,8 @@
 			children = (
 				A58B28C1274D2B190010C2A4 /* DeviceProvider.swift */,
 				A5D4975C2751903600EF64FC /* Configurator.swift */,
+				A5312CC92754F6DC00935333 /* StaticArrayData.swift */,
+				A5312CCB27550E9C00935333 /* StorageJSON.swift */,
 			);
 			path = Service;
 			sourceTree = "<group>";
@@ -198,6 +204,7 @@
 			files = (
 				A58B28BB274D11640010C2A4 /* BackEndViewController.swift in Sources */,
 				A58B28A8274CF17A0010C2A4 /* StoreFrontContentViewController.swift in Sources */,
+				A5312CCC27550E9C00935333 /* StorageJSON.swift in Sources */,
 				A58B28C4274D92F70010C2A4 /* DetailViewController.swift in Sources */,
 				A51CAF86274ECB5100682B4B /* DetailDeviceView.swift in Sources */,
 				A5D4975D2751903600EF64FC /* Configurator.swift in Sources */,
@@ -205,6 +212,7 @@
 				A58B28C2274D2B190010C2A4 /* DeviceProvider.swift in Sources */,
 				A53552DE2753FC350050169D /* MainTabBarViewController.swift in Sources */,
 				A58B28C0274D2A230010C2A4 /* Device.swift in Sources */,
+				A5312CCA2754F6DC00935333 /* StaticArrayData.swift in Sources */,
 				A58B28BD274D19F30010C2A4 /* DeviceCell.swift in Sources */,
 				A58B28A6274CF17A0010C2A4 /* SceneDelegate.swift in Sources */,
 				A5FF46162750277100B44F9D /* extensions+UIViews.swift in Sources */,
