@@ -108,7 +108,7 @@ extension DeviceProvider: BackEndProviderProtocol {
     var countTable: Int {
         var count = 0
         queueRead {
-            count = self.devices.filter { $0.count != 0 }.count
+            count = self.devices.count
         }
         return count
     }
