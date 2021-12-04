@@ -67,7 +67,7 @@ class DetailDeviceView: UIView {
     
     override func updateConstraints() {
         NSLayoutConstraint.activate([
-            nameDeviceLabel.topAnchor.constraint(equalTo: topAnchor, constant: 70),
+            nameDeviceLabel.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 16),
             nameDeviceLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
             nameDeviceLabel.heightAnchor.constraint(equalTo: heightAnchor, multiplier: 0.03),
             nameDeviceLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -100),
