@@ -26,7 +26,7 @@ class DetailDeviceView: UIView {
     
     let priceTextField: UITextField = {
         let textField = UITextField.createTextField(placeholder: "Укажите цену в руб.")
-        textField.keyboardType = .numberPad
+        textField.keyboardType = .asciiCapableNumberPad
         return textField
     }()
     
@@ -37,7 +37,7 @@ class DetailDeviceView: UIView {
     
     let countTextField: UITextField = {
         let textField = UITextField.createTextField(placeholder: "Количество в штуках")
-        textField.keyboardType = .numberPad
+        textField.keyboardType = .asciiCapableNumberPad
         return textField
     }()
     

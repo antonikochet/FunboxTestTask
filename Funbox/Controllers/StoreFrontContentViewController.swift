@@ -14,10 +14,16 @@ class StoreFrontContentViewController: UIViewController {
     private var countLabel: UILabel?
     private var buyButton: UIButton?
     
+    var activity: UIActivityIndicatorView?
+    
     var pageNumber: Int = 0
     var buy: ((Device) -> Void)?
     
-    var device: Device!
+    var device: Device! {
+        didSet {
+            configure()
+        }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -97,21 +103,32 @@ class StoreFrontContentViewController: UIViewController {
         
         self.buyButton = button
         
+        let activity = UIActivityIndicatorView()
+        activity.isHidden = true
+        activity.color = .blue
+        activity.translatesAutoresizingMaskIntoConstraints = false
+        
+        self.activity = activity
+        
         let viewButton = UIView()
         viewButton.addSubview(button)
+        viewButton.addSubview(activity)
         
         NSLayoutConstraint.activate([
             button.centerXAnchor.constraint(equalTo: viewButton.centerXAnchor),
             button.centerYAnchor.constraint(equalTo: viewButton.centerYAnchor),
             button.widthAnchor.constraint(equalTo: viewButton.widthAnchor, multiplier: 0.5),
-            button.heightAnchor.constraint(equalTo: viewButton.heightAnchor, multiplier: 0.35)])
+            button.heightAnchor.constraint(equalTo: viewButton.heightAnchor, multiplier: 0.35),
+            
+            activity.centerXAnchor.constraint(equalTo: viewButton.centerXAnchor),
+            activity.topAnchor.constraint(equalTo: button.bottomAnchor, constant: 16)
+        ])
         
         return viewButton
     }
     
     @objc private func buyAction() {
         buy?(device)
-        configure()
     }
 }
 

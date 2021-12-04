@@ -48,10 +48,36 @@ class StorePageViewController: UIPageViewController {
         storeFrontVC.device = device
         storeFrontVC.pageNumber = index
         storeFrontVC.buy = { [weak self] localDevice in
-            let newDevice = self?.deviceProvider.buy(localDevice)
-            storeFrontVC.device = newDevice != nil ? newDevice : device
+            storeFrontVC.activity?.startAnimating()
+            storeFrontVC.activity?.isHidden = false
+            self?.deviceProvider.buy(localDevice) { device in
+                guard device != nil else { return }
+                DispatchQueue.main.async {
+                    storeFrontVC.activity?.stopAnimating()
+                    storeFrontVC.activity?.isHidden = true
+                    storeFrontVC.device = device
+                }
+            }
+            
+            self?.buyLastDevice(localDevice, currectVC: storeFrontVC)
         }
         return storeFrontVC
+    }
+    
+    private func buyLastDevice(_ device: Device, currectVC: StoreFrontContentViewController) {
+        guard device.count <= 1 else { return }
+        let index = currectVC.pageNumber
+        
+        let nextPageDevice = index == deviceProvider.count - 1 ? index - 1 : index + 1
+        if let nextVC = showViewController(at: nextPageDevice) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(3)) {
+                if let firstVC = self.viewControllers?.first,
+                    firstVC == currectVC {
+                    print("currectVC:", currectVC, "firstVC:", firstVC)
+                    self.setViewControllers([nextVC], direction: .forward, animated: true, completion: nil)
+                }
+            }
+        }
     }
 }
 

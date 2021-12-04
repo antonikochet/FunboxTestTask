@@ -11,15 +11,15 @@ import Foundation
 protocol StoreFrontProviderProtocol: AnyObject {
     var count: Int { get }
     func view(with index: Int) -> Device?
-    func buy(_ device: Device) -> Device?
+    func buy(_ device: Device, completion: @escaping (Device?) -> Void)
 }
 
 protocol BackEndProviderProtocol: AnyObject {
     var countTable: Int { get }
     func getDevice(by index: Int) -> Device?
-    func addDevice(_ device: Device)
-    func editingDevice(_ device: Device, index: Int)
-    func deleteDevice(index: Int)
+    func addDevice(_ device: Device, completion: @escaping () -> Void)
+    func editingDevice(_ device: Device, index: Int, completion: @escaping () -> Void)
+    func deleteDevice(index: Int, completion: @escaping () -> Void)
 }
 
 //MARK: - protocol for adapter target
@@ -32,67 +32,115 @@ protocol StorageProtocol {
 class DeviceProvider {
     private var devices: [Device] {
         willSet {
-            storage.saveData(newValue)
+            DispatchQueue.global(qos: .background).async {
+                self.storage.saveData(newValue)
+            }
         }
     }
     
     private var storage: StorageProtocol
     
+    private var queue = DispatchQueue(label: "queue", attributes: .concurrent)
+    
     init(storage: StorageProtocol) {
         self.storage = storage
         self.devices = storage.getData()
+    }
+    
+    private func queueBuy(completion: @escaping () -> Void) {
+        queue.asyncAfter(deadline: .now() + .seconds(3), flags: .barrier) {
+            completion()
+        }
+    }
+    
+    private func queueSave(completion: @escaping () -> Void) {
+        queue.asyncAfter(deadline: .now() + .seconds(5), flags: .barrier) {
+            completion()
+        }
+    }
+    
+    private func queueRead(completion: @escaping () -> Void) {
+        queue.sync {
+            completion()
+        }
     }
 }
 
 extension DeviceProvider: StoreFrontProviderProtocol {
     
     var count: Int {
-        return devices.filter { $0.count != 0 }.count
+        var count = 0
+        queueRead {
+            count = self.devices.filter { $0.count != 0 }.count
+        }
+        return count
     }
     
     func view(with index: Int) -> Device? {
-        let viewDevices = devices.filter { $0.count != 0 }
-        if viewDevices.count > index {
-            return viewDevices[index]
-        } else {
-            return nil
+        var viewDeivce: Device?
+        queueRead {
+            let viewDevices = self.devices.filter { $0.count != 0 }
+            if viewDevices.count > index {
+                viewDeivce = viewDevices[index]
+            }
         }
+        return viewDeivce
     }
     
-    func buy(_ device: Device) -> Device? {
-        guard let index = devices.firstIndex(of: device) else { return nil }
-        
-        if devices[index].count > 1 {
-            devices[index].count -= 1
-        } else {
-            devices[index].count = 0
+    func buy(_ device: Device, completion: @escaping (Device?) -> Void) {
+        queueBuy {
+            guard let index = self.devices.firstIndex(of: device) else {
+                completion(nil)
+                return
+            }
+            
+            if self.devices[index].count > 1 {
+                self.devices[index].count -= 1
+            } else {
+                self.devices[index].count = 0
+            }
+            completion(self.devices[index])
         }
-        return devices[index]
     }
 }
 
 extension DeviceProvider: BackEndProviderProtocol {
     var countTable: Int {
-        return devices.count
+        var count = 0
+        queueRead {
+            count = self.devices.filter { $0.count != 0 }.count
+        }
+        return count
     }
     
     func getDevice(by index: Int) -> Device? {
-        if devices.count > index && index >= 0 {
-            return devices[index]
-        } else {
-            return nil
+        var viewDeivce: Device?
+        queueRead {
+            if self.devices.count > index && index >= 0 {
+                viewDeivce = self.devices[index]
+            }
+        }
+        return viewDeivce
+    }
+    
+    func addDevice(_ device: Device, completion: @escaping () -> Void) {
+        queueSave {
+            self.devices.append(device)
+            completion()
         }
     }
     
-    func addDevice(_ device: Device) {
-        devices.append(device)
+    func editingDevice(_ device: Device, index: Int, completion: @escaping () -> Void) {
+        queueSave {
+            self.devices[index] = device
+            completion()
+        }
     }
     
-    func editingDevice(_ device: Device, index: Int) {
-        devices[index] = device
-    }
-    
-    func deleteDevice(index: Int) {
-        devices.remove(at: index)
+    func deleteDevice(index: Int, completion: @escaping () -> Void) {
+        queueSave {
+            self.devices.remove(at: index)
+            completion()
+        }
     }
 }

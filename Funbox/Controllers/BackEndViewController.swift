@@ -9,6 +9,9 @@ import UIKit
 
 class BackEndViewController: UITableViewController {
 
+    private var activity: UIActivityIndicatorView?
+    private var countEditActivity: Int = 0
+    
     private var deviceProvider: BackEndProviderProtocol
     
     init(provider: BackEndProviderProtocol) {
@@ -26,12 +29,45 @@ class BackEndViewController: UITableViewController {
         tableView.dataSource = self
         tableView.delegate = self
         setupNavBar()
+        setupActivityIndicator()
     }
 
     func updateContent() {
         DispatchQueue.main.async {
             self.tableView.reloadData()
         }
+    }
+    
+    private func setupActivityIndicator() {
+        let activity = UIActivityIndicatorView(style: .large)
+        activity.color = .blue
+        activity.isHidden = true
+        activity.translatesAutoresizingMaskIntoConstraints = false
+        
+        view.addSubview(activity)
+        view.bringSubviewToFront(activity)
+        
+        self.activity = activity
+        
+        NSLayoutConstraint.activate([
+            activity.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
+            activity.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor)])
+    }
+    
+    private func startActivity() {
+        activity?.startAnimating()
+        activity?.isHidden = false
+        countEditActivity += 1
+    }
+    
+    private func stopActivity() {
+        if countEditActivity < 2 {
+            DispatchQueue.main.async {
+                self.activity?.stopAnimating()
+                self.activity?.isHidden = true
+            }
+        }
+        countEditActivity -= 1
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -75,7 +111,10 @@ extension BackEndViewController {
     
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-            deviceProvider.deleteDevice(index: indexPath.row)
+            deviceProvider.deleteDevice(index: indexPath.row) {
+                self.updateContent()
+                self.stopActivity()
+            }
             tableView.deleteRows(at: [indexPath], with: .left)
         }
     }
@@ -98,9 +137,10 @@ extension BackEndViewController {
 
 extension BackEndViewController: AddDeviceDelegate {
     func addDevice(_ device: Device) {
-        deviceProvider.addDevice(device)
-        DispatchQueue.main.async {
-            self.tableView.reloadData()
+        startActivity()
+        deviceProvider.addDevice(device) {
+            self.updateContent()
+            self.stopActivity()
         }
     }
 }
@@ -108,9 +148,10 @@ extension BackEndViewController: AddDeviceDelegate {
 extension BackEndViewController: EditDeviceDelegate {
     func editDevice(_ device: Device) {
         if let indexRow = tableView.indexPathForSelectedRow {
-            deviceProvider.editingDevice(device, index: indexRow.row)
-            DispatchQueue.main.async {
-                self.tableView.reloadData()
+            startActivity()
+            deviceProvider.editingDevice(device, index: indexRow.row) {
+                self.updateContent()
+                self.stopActivity()
             }
         }
     }
